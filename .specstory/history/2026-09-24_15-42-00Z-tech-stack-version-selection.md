@@ -2868,6 +2868,808 @@ _**Agent (composer-2.5)**_
 
 <tool-use data-tool-type="write" data-tool-name="edit_file_v2"><details>
 <summary>Tool use: **edit_file_v2** • Edit file: /home/kanupriya/applications/TicketMgmtSystem/spec/ui-flow.md</summary>
-Status: **loading**
 
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2"><details>
+<summary>Tool use: **edit_file_v2** • Edit file: /home/kanupriya/applications/TicketMgmtSystem/spec/README.md</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<think><details><summary>Thought Process</summary>
+Drafting the UI flow specification for the frontend.
+</details></think>
+
+_**Agent (composer-2.5)**_
+
+Created **`spec/ui-flow.md`**.
+
+## Pages (4 routes)
+
+| Route | Purpose | Phase |
+|-------|---------|-------|
+| `/tickets` | List + search + status filter | 1 / 2 |
+| `/tickets/new` | Create ticket | 1 |
+| `/tickets/[id]` | Details, status actions, comments | 1 / 2 / 4 |
+| `/tickets/[id]/edit` | Edit title, description, assignee | 1 / 3 |
+
+No dashboard, auth, or delete — not in requirements/API.
+
+## Flows covered
+
+- **List** — table, pagination, row → details; phase 2 adds search (debounced) and status dropdown
+- **Create** — title + description (priority/assignee in later phases)
+- **Details** — metadata, description, status buttons (only valid transitions per `state-machine.md`)
+- **Edit** — same fields as create; blocked for `CLOSED` / `CANCELLED`
+- **Assignee** — display on list/details; dropdown on create/edit (phase 3; needs `GET /users` — flagged as assumption)
+- **Comments** — thread + add form on details (phase 4); hidden on terminal tickets
+- **Errors** — field-level 400, 404 not found, 409 conflict (show API message), 500/network fallbacks; dismissible banners, no `alert()`
+
+## Status buttons (UI mirrors state machine)
+
+| Status | Actions shown |
+|--------|----------------|
+| `OPEN` | Start work, Cancel |
+| `IN_PROGRESS` | Resolve, Cancel |
+| `RESOLVED` | Close |
+| `CLOSED` / `CANCELLED` | None (read-only) |
+
+Backend still enforces rules — UI only shows allowed actions.
+
+## Phase 1 MVP (requirements only)
+
+List, create, view, edit with **title + description** only. No search, filters, status UI, assignee, or comments until requirements are updated.
+
+`spec/README.md` updated. Ready to scaffold `frontend/` when you want to build.
+
+---
+
+_**User**_
+
+Create spec/test-strategy.md.Based on all the specs, define what we need to test.Make sure every valid and invalid ticket status transition is covered. Also cover validation, api errors, search, filtering, comments and database persistence.
+
+---
+
+_**Agent (composer-2.5)**_
+
+<think><details><summary>Thought Process</summary>
+Reviewing all existing project specifications to draft a comprehensive test strategy. Every valid and invalid ticket status transition will be covered. Validation, API errors, search, filtering, comments, and database persistence will also be included.
+</details></think>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/spec/state-machine.md</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/spec/api-contract.md</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/rules/testing.mdc</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<think><details><summary>Thought Process</summary>
+Planning a comprehensive test strategy document covering all valid and invalid ticket status transitions, validation, API errors, search, filtering, comments, and database persistence.
+
+Mapping out the full transition matrix. Five statuses yield 25 total from-to pairs. Five are valid transitions. Twenty are invalid. This includes no-op cases where a ticket stays in its current status. The strategy will define test pyramid layers alongside these complete matrices.
+
+Enumerating the twenty invalid transitions by source state. OPEN maps to three invalid targets. IN_PROGRESS maps to three invalid plus one no-op. RESOLVED maps to four invalid plus one valid. CLOSED and CANCELLED are terminal states with five invalid transitions each. The count checks out at twenty.
+
+The document will mirror the api-contract phases. Backend coverage takes priority; frontend tests are optional. The structure begins with goals and principles, then test layers and tools, followed by phase alignment and a test catalog organized by area, starting with ticket CRUD.
+
+The remaining sections will include a full transition matrix table, test class mapping, exclusion criteria, and CI instructions. The spec/README.md file also needs updating.
+</details></think>
+
+_**Agent (composer-2.5)**_
+
+Creating the test strategy with a complete status-transition matrix and coverage across all spec areas.
+
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2"><details>
+<summary>Tool use: **edit_file_v2** • Edit file: /home/kanupriya/applications/TicketMgmtSystem/spec/test-strategy.md</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2"><details>
+<summary>Tool use: **edit_file_v2** • Edit file: /home/kanupriya/applications/TicketMgmtSystem/spec/README.md</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2"><details>
+<summary>Tool use: **edit_file_v2** • Edit file: /home/kanupriya/applications/TicketMgmtSystem/rules/testing.mdc</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<think><details><summary>Thought Process</summary>
+Drafting the test strategy document now. It will map every valid and invalid ticket status transition, plus validation, API errors, search, filtering, comments, and database persistence.
+</details></think>
+
+_**Agent (composer-2.5)**_
+
+Created **`spec/test-strategy.md`**.
+
+## Structure
+
+| Section | Content |
+|---------|---------|
+| **Test layers** | Unit → Repository → API slice → IT (what goes where) |
+| **Test catalogue** | IDs for CRUD, validation, errors, search, filter, comments, persistence |
+| **Status matrix** | **All 25 pairs** — 5 valid + 20 invalid |
+| **Test classes** | Suggested `*Test` / `*IT` layout under `backend/src/test/` |
+
+## Status transitions (complete coverage)
+
+**Valid (200)** — all 5:
+- OPEN → IN_PROGRESS, OPEN → CANCELLED  
+- IN_PROGRESS → RESOLVED, IN_PROGRESS → CANCELLED  
+- RESOLVED → CLOSED  
+
+**Invalid (409)** — all 20 remaining pairs, including:
+- Terminal exits (CLOSED/CANCELLED → anything)
+- Skips (OPEN → RESOLVED, IN_PROGRESS → CLOSED, …)
+- Backwards (RESOLVED → OPEN, …)
+- No-ops (OPEN → OPEN, …)
+
+Parameterized `@CsvSource` tests recommended for the invalid matrix.
+
+## Other coverage
+
+| Area | Key tests |
+|------|-----------|
+| **Validation** | Blank title, 255+ chars, bad status/priority, empty PATCH, blank comment |
+| **API errors** | 404 not found, 409 transitions/edit/comment rules, error JSON shape |
+| **Search** | Title/description match, case-insensitive, empty results, + pagination |
+| **Filtering** | Status, multi-status, priority, assignee, unassigned, combined with search |
+| **Comments** | List, create, 404, 400, 409 on closed, cascade on ticket delete |
+| **Persistence** | FK constraints, NOT NULL, status persisted after change, `updated_at`, custom queries |
+
+## Phases
+
+Aligned with `api-contract.md`: phase 1 = CRUD; phase 2 = transitions + search/filter; phase 3 = assignee; phase 4 = comments.
+
+Also updated `rules/testing.mdc` to reference the full 25-pair matrix and `spec/README.md`. Use `/generate-tests` when you're ready to scaffold.
+
+---
+
+_**User**_
+
+Before we start coding, review all the specs you created.Read everything under spec/ and rules/.Find anything missing, conflicting or unclear.Dont fix it yet. Just show me the issues and why they are issues. I want to review the AI output before we start implementation.
+
+---
+
+_**Agent (composer-2.5)**_
+
+<think><details><summary>Thought Process</summary>
+Reviewing all files under spec/ and rules/ to identify missing, conflicting, or unclear requirements.
+</details></think>
+
+_**Agent (composer-2.5)**_
+
+Reading all files under `spec/` and `rules/` for a pre-implementation review.
+
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="search" data-tool-name="glob_file_search"><details>
+<summary>Tool use: **glob_file_search** • Searched codebase "" • **12** results in **1** directory</summary>
+
+Directory: **`/home/kanupriya/applications/TicketMgmtSystem/spec`** (12 files)
+
+| File |
+|------|
+| `README.md` |
+| `test-strategy.md` |
+| `ui-flow.md` |
+| `data-model.md` |
+| `api-contract.md` |
+| `state-machine.md` |
+| `01-architecture.md` |
+| `architecture.md` |
+| `requirements.md` |
+| `features/README.md` |
+| `02-conventions.md` |
+| `00-product-overview.md` |
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="search" data-tool-name="glob_file_search"><details>
+<summary>Tool use: **glob_file_search** • Searched codebase "" • **6** results in **1** directory</summary>
+
+Directory: **`/home/kanupriya/applications/TicketMgmtSystem/rules`** (6 files)
+
+| File |
+|------|
+| `testing.mdc` |
+| `README.md` |
+| `api-standards.mdc` |
+| `java-springboot.mdc` |
+| `20-nextjs-frontend.mdc` |
+| `00-project-core.mdc` |
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<think><details><summary>Thought Process</summary>
+Reading through all the spec and rules files to identify gaps, conflicts, and unclear requirements.
+</details></think>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/spec/requirements.md</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/spec/00-product-overview.md</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/spec/architecture.md</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/spec/data-model.md</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/spec/api-contract.md</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/spec/state-machine.md</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<think><details><summary>Thought Process</summary>
+Reviewing the UI flow, test strategy, conventions, feature README, and all rules files to identify gaps, conflicts, and ambiguities.
+</details></think>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/spec/ui-flow.md</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/spec/test-strategy.md</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/spec/02-conventions.md</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/rules/00-project-core.mdc</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/rules/java-springboot.mdc</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/rules/api-standards.mdc</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/rules/testing.mdc</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/rules/20-nextjs-frontend.mdc</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<think><details><summary>Thought Process</summary>
+Compiling a thorough review of issues across the spec/ and rules/ directories. Missing requirements, conflicting definitions, and unclear specifications will be identified for user review before implementation begins.
+
+The most severe conflict is scope creep between requirements.md and downstream specs. requirements.md explicitly excludes status workflows, comments, search, filters, assignees, and priorities. Yet data-model, api-contract, state-machine, ui-flow, and test-strategy all define these features. The state-machine spec is approved despite Q-04 in requirements.md remaining open. This creates two competing sources of truth.
+
+Requirements.md never reflects the user's decisions on the state machine. Product overview still lists search, assign, and comments as planned despite being non-authoritative per requirements.md. State-machine.md §4.4 contains an incomplete invalid matrix that conflicts with test-strategy.md.
+
+State-machine §4.4 omits terminal no-ops for CLOSED and CANCELLED transitions. Test-strategy mandates all twenty invalid transitions, while state-machine §8 limits coverage to a representative sample.
+
+Comment rules contradict each other. api-contract AC-05 blocks comments on CLOSED tickets only. ui-flow and test-strategy block both CLOSED and CANCELLED tickets. It is unclear whether CANCELLED tickets should accept comments.
+
+Edit restrictions conflict over CANCELLED tickets. api-contract AC-04 blocks editing on CLOSED tickets only. ui-flow blocks both CLOSED and CANCELLED tickets.
+
+api-contract places assigneeId in phase 2+ JSON examples but marks it phase 3 in error tables.
+
+The api-contract multi-status filter format remains undecided.
+
+The api-contract multi-status filter format is unresolved. It allows either repeatable OR comma-separated values but does not mandate a single style.
+
+No user creation API exists. ui-flow, data-model, and api-contract all reference users and assignees without defining how to create or seed them.
+
+There is no DELETE ticket endpoint. test-strategy C-07 expects cascading comment deletion, yet api-contract defines no delete route and data-model only describes cascade behavior.
+
+java-springboot.mdc requires choosing between Long and UUID for IDs, but architecture AD-04 remains open.
+
+Gradle location is ambiguous. Architecture AD-02 leaves the build file at backend/ or repo root. Test-strategy assumes cd backend && ./gradlew.
+
+Frontend path conventions conflict. Architecture specifies frontend/src/app/. The Next.js frontend spec uses frontend/src/features/ and app/. ui-flow omits src/ structure entirely. It is unclear whether frontend/app or frontend/src/app is correct.
+
+Test strategy now mandates full coverage of all 25 invalid transition pairs. Rules/testing.mdc requires the complete 25-pair matrix.
+
+Phase 1 tests expect OPEN status by default, yet architecture defers the status field to phase 2. Either the database needs an early status column, or the test assumption is incorrect.
+
+Data-model names its entity TicketStatus, but the state machine treats TicketStatus as an enum concept. This creates a naming conflict between the database entity and the state machine abstraction.
+
+Standard error formats conflict. 02-conventions omits the `errors[]` array used by api-standards and api-contract for 400 responses.
+
+No feature-level specifications exist in spec/features/. requirements.md directs moving confirmed scope there, yet only a template README is present.
+
+Lombok is absent from architecture docs and project-versions. java-springboot.mdc references it conditionally, but no decision or version is recorded.
+
+JPA auditing is required by java-springboot but the architecture never enables it. The initial model has timestamps yet provides no configuration.
+
+AD-03 leaves Flyway versus Liquibase undecided.
+
+Pagination response formats conflict. api-contract uses a custom page wrapper. java-springboot returns Spring Page objects. These may serialize differently. Explicit mapping is needed.
+
+api-contract defines a priority filter. ui-flow excludes it.
+
+rules/api-standards cites `/api/v1/ticket-comments` as a standalone path, but the actual API nests comments under `tickets/{id}/comments`. This creates a routing inconsistency.
+
+OpenAPI and SpringDoc tooling choices remain undecided. This affects test generation and documentation coverage.
+
+Environment setup is missing from docs/setup.md. CORS and NEXT_PUBLIC_API_URL are not documented anywhere.
+
+Requirements.md step 3 was never completed. The product overview stays stale.
+
+Phase 2 priority placement is inconsistent across specs. data-model, api-contract, and ui-flow all add priority in phase 2, but the exact fields and timing differ.
+
+rules/testing.mdc contradicts itself. It demands a minimum test set for invalid transitions while simultaneously requiring the full 25-pair matrix.
+</details></think>
+
+_**Agent (composer-2.5)**_
+
+Pre-implementation spec review. **No fixes applied** — issues only.
+
+---
+
+## Critical: authority and scope conflicts
+
+### 1. `requirements.md` vs everything else (biggest blocker)
+
+`requirements.md` is labeled **authoritative** and says these are **out of scope** until updated:
+
+- Status workflow / state machine (Q-04)
+- Comments (Q-06)
+- Search and filter (Q-07)
+- Assignee (Q-05)
+- Priorities (Q-01)
+
+But `data-model.md`, `api-contract.md`, `ui-flow.md`, and `test-strategy.md` all define full behaviour for those features. `state-machine.md` is even marked **Approved**.
+
+**Why it matters:** You cannot tell implementers whether phase 1 is “CRUD only” or “build the full target system.” Tests and UI are written for features requirements still forbid.
+
+---
+
+### 2. `state-machine.md` is Approved but `requirements.md` Q-04 is still open
+
+`state-machine.md` defines statuses and all transitions. `requirements.md` Q-04 still asks: *“What ticket statuses exist and which transitions are allowed?”*
+
+**Why it matters:** Two docs answer the same question differently. Either requirements need updating (user confirmed the state machine) or `state-machine.md` should not be Approved yet.
+
+---
+
+### 3. `00-product-overview.md` contradicts `requirements.md` and was never reconciled
+
+Product overview still lists as planned: auth, roles, dashboard, assign, comments, search, status workflow. `requirements.md` §3 marks most of that out of scope and §8 step 3 says to align the overview — **not done**.
+
+**Why it matters:** Anyone reading the overview first will assume a much larger v1 than requirements allow.
+
+---
+
+## Conflicts between detailed specs
+
+### 4. Comments on terminal tickets: `CLOSED` only vs `CLOSED` + `CANCELLED`
+
+| Doc | Rule |
+|-----|------|
+| `api-contract.md` AC-05 | 409 when commenting on **`CLOSED`** ticket |
+| `ui-flow.md` §8, §10 | 409 for **`CLOSED` or `CANCELLED`** |
+| `test-strategy.md` E-04 | **`CLOSED`/`CANCELLED`** |
+
+**Why it matters:** Implementers won’t know if cancelled tickets accept comments.
+
+---
+
+### 5. Edit ticket on terminal status: `CLOSED` only vs both terminal states
+
+| Doc | Rule |
+|-----|------|
+| `api-contract.md` AC-04 | Cannot edit **`CLOSED`** ticket |
+| `ui-flow.md` §6 | No edit for **`CLOSED` or `CANCELLED`** |
+
+**Why it matters:** Same ambiguity as comments — can a `CANCELLED` ticket’s title/description still be patched?
+
+---
+
+### 6. Priority filter: API has it, UI explicitly excludes it
+
+- `api-contract.md` §3.2: `priority` query param on list
+- `test-strategy.md` F-03: filter by priority
+- `ui-flow.md` §11: **“Priority filter — Not requested (status filter only)”**
+
+**Why it matters:** Backend may implement a filter the UI will never use, or UI spec is wrong if API exposes it.
+
+---
+
+### 7. Assignee phase numbering inconsistent in `api-contract.md`
+
+- §1 alignment table: assignee = **phase 3**
+- §3.1 create request: `assigneeId` shown under **“Phase 2+ optional fields”**
+- §3.2 list: `assigneeId` filter = **phase 3**
+
+**Why it matters:** Unclear when assignee appears on create vs list vs edit.
+
+---
+
+### 8. Multi-value `status` filter format undecided
+
+`api-contract.md` §3.2: repeatable `status=OPEN&status=IN_PROGRESS` **or** comma-separated — **“pick one style at implementation.”**
+
+**Why it matters:** API contract should be fixed before implementation; clients and tests need one format.
+
+---
+
+### 9. Transition test coverage: “full matrix” vs “representative sample”
+
+| Doc | Requirement |
+|-----|-------------|
+| `state-machine.md` §8 | Representative sample from §4 |
+| `test-strategy.md` §5 | **All 25 pairs** must have tests |
+| `rules/testing.mdc` | Full 25-pair matrix |
+
+**Why it matters:** Test effort and acceptance criteria differ. `state-machine.md` is behind the other two.
+
+---
+
+### 10. `state-machine.md` §4.4 incomplete on no-op transitions
+
+§4.4 lists no-ops for `OPEN`, `IN_PROGRESS`, `RESOLVED` only. `test-strategy.md` also requires `CLOSED`→`CLOSED` and `CANCELLED`→`CANCELLED` as **409**.
+
+**Why it matters:** Invalid-transition examples in the state machine doc don’t match the full matrix used for tests.
+
+---
+
+### 11. Phase 1 vs default `OPEN` status
+
+- `architecture.md` / `data-model.md`: phase 1 = **no status column** (title, description, timestamps only)
+- `api-contract.md` AC-01 / `test-strategy.md` T-02: new tickets default to **`OPEN`**
+- `state-machine.md`: create → `OPEN`
+
+**Why it matters:** Phase 1 either needs status in the DB from day one, or tests/defaults belong in phase 2 only.
+
+---
+
+### 12. `rules/api-standards.mdc` URL example vs `api-contract.md`
+
+`api-standards.mdc` gives example `/api/v1/ticket-comments`. Actual contract nests under `/api/v1/tickets/{id}/comments`.
+
+**Why it matters:** Minor but could mislead generated code.
+
+---
+
+### 13. Spring `Page` JSON vs custom page wrapper
+
+- `api-contract.md` §2.3: `{ content, page, size, totalElements, totalPages }`
+- `java-springboot.mdc`: “return `Page<Dto>`”
+- Spring’s default `Page` JSON uses `number`, not `page`, and may differ
+
+**Why it matters:** Serializing `Page` directly may break the documented API contract unless you add a custom DTO mapper.
+
+---
+
+## Missing specifications
+
+### 14. No `GET /api/v1/users` (or any user API)
+
+Needed for:
+
+- `ui-flow.md` UI-01 (assignee dropdown)
+- `api-contract.md` assigneeId on create/update/filter
+- `data-model.md` `users` table
+
+**Why it matters:** Phase 3 assignee cannot work without user list/create/seed strategy.
+
+---
+
+### 15. No ticket `DELETE` API, but tests assume delete
+
+- `test-strategy.md` C-07: “Delete ticket cascades comments”
+- `data-model.md`: `ON DELETE CASCADE` for comments
+- `api-contract.md`: no `DELETE /tickets/{id}`
+- `ui-flow.md` §11: delete explicitly excluded
+
+**Why it matters:** Cascade behaviour can’t be tested via API; only direct repo delete or missing test.
+
+---
+
+### 16. No feature specs under `spec/features/`
+
+Only `features/README.md` (template). `requirements.md` says confirmed scope should move there before implementation.
+
+**Why it matters:** Spec-driven workflow (`rules/00-project-core.mdc`) expects feature specs; large behaviour lives only in cross-cutting docs.
+
+---
+
+### 17. No `docs/setup.md` or env contract
+
+Architecture references `BACKEND_URL` / `NEXT_PUBLIC_API_URL`, CORS, profiles — no single setup doc tying local run, env vars, and DB profiles together.
+
+**Why it matters:** First scaffold will guess ports, URLs, and profile names.
+
+---
+
+### 18. No frontend test strategy
+
+`test-strategy.md` explicitly excludes frontend. `ui-flow.md` defines flows and errors but nothing on component/E2E tests.
+
+**Why it matters:** UI regressions (status buttons, filters) won’t be covered unless you rely only on manual testing.
+
+---
+
+## Unclear / open decisions (still unresolved across specs)
+
+### 19. Open questions in `requirements.md` mostly unanswered
+
+| ID | Still open | Specs that already assume an answer |
+|----|------------|-------------------------------------|
+| Q-01 | Priority fields | `data-model`, `api-contract`, `ui-flow` |
+| Q-02 | Auth | Error codes 401/403 everywhere |
+| Q-03 | Roles | `00-product-overview` roles |
+| Q-04 | Status/transitions | `state-machine.md` Approved |
+| Q-05 | Assignee | Full assignee model |
+| Q-06 | Comments | Full comments API/UI |
+| Q-07 | Search/filter | Full list API/UI |
+| Q-08 | Gradle vs Maven | A-03 assumes Gradle |
+
+**Why it matters:** Many “assumption” flags in downstream docs; authoritative requirements weren’t updated after your decisions.
+
+---
+
+### 20. Architecture decisions still TBD
+
+From `architecture.md` §10:
+
+- AD-01 Auth mechanism  
+- AD-02 Gradle at repo root vs `backend/` only  
+- AD-03 Flyway vs Liquibase  
+- AD-04 Ticket ID: Long vs UUID  
+- AD-05 Frontend API URL pattern  
+
+**Why it matters:** Scaffold structure, migrations, and ID types affect every layer.
+
+---
+
+### 21. Lombok usage unspecified
+
+`java-springboot.mdc` mentions `@RequiredArgsConstructor` **if Lombok is on classpath**. Not in `docs/project-versions.md` or architecture.
+
+**Why it matters:** Implementers may add a dependency not approved in version matrix.
+
+---
+
+### 22. JPA auditing setup not specified
+
+Rules require `@CreatedDate` / `@LastModifiedDate`; architecture/data-model expect `created_at` / `updated_at`. No spec for enabling `@EnableJpaAuditing` or who sets timestamps.
+
+**Why it matters:** Easy to ship entities without auditing wired correctly.
+
+---
+
+### 23. `TicketStatus` naming collision risk
+
+`data-model.md`: JPA entity `TicketStatus` → lookup table `ticket_status`. State machine treats status as enum codes (`OPEN`, etc.). Likely need `TicketStatusEntity` vs `TicketStatus` enum — not documented.
+
+**Why it matters:** Naming confusion in service/transition code.
+
+---
+
+### 24. How users/comments get an `author` without auth (Q-02)
+
+`api-contract.md`: author from authenticated user; if no auth, `author` may be `null`. No spec for optional `authorId` in comment request or seed users.
+
+**Why it matters:** Comments UI shows author names but auth is explicitly deferred.
+
+---
+
+### 25. `unassigned=true` filter (AC-03)
+
+Documented only as assumption in `api-contract.md`. Not in `ui-flow.md` (UI may not expose it).
+
+**Why it matters:** API capability with no UI or test priority clarity.
+
+---
+
+### 26. Confirm dialog for cancel (UI-04)
+
+`ui-flow.md` UI-04: optional confirm for **Cancel ticket** only — optional, not required.
+
+**Why it matters:** Minor UX inconsistency if different devs interpret “optional” differently.
+
+---
+
+## Minor inconsistencies (lower risk)
+
+### 27. `02-conventions.md` validation error shape incomplete
+
+Shows standard error without `errors[]` array; `api-contract.md` and `api-standards.mdc` include field errors for 400.
+
+---
+
+### 28. `rules/testing.mdc` internal tension
+
+Points to full 25-pair matrix but §“Invalid transitions (minimum test set)” still lists only a subset.
+
+---
+
+### 29. `state-machine.md` status **Approved** vs other specs **Draft**
+
+Only the state machine is Approved; requirements, API, data model, UI, test strategy are Draft — uneven maturity.
+
+---
+
+### 30. Duplicate architecture entry point
+
+`01-architecture.md` redirects to `architecture.md` — fine, but easy to miss if something still links to the old file.
+
+---
+
+## Suggested order to resolve before coding
+
+1. **Update `requirements.md`** — move status machine, comments, search/filter, priority, assignee in or out of v1 explicitly (your call).
+2. **Reconcile terminal-state rules** — edit + comments on `CANCELLED` vs `CLOSED` only.
+3. **Fix phase 1 scope** — tickets with or without status column on day one.
+4. **Add missing APIs** — at minimum `GET /users` (and how users are created) if assignee is in scope.
+5. **Resolve DELETE vs cascade test** — add DELETE to contract or drop C-07 / change test approach.
+6. **Lock API details** — page JSON shape, multi-status param style, assignee phase.
+7. **Align `00-product-overview.md`** or mark it deprecated.
+8. **Write first feature spec(s)** in `spec/features/` for phase 1 (and later phases).
+
+---
+
+## Summary
+
+| Category | Count |
+|----------|-------|
+| Critical authority / scope conflicts | 3 |
+| Cross-spec conflicts | 10 |
+| Missing specs | 5 |
+| Unclear / open decisions | 8 |
+| Minor inconsistencies | 4 |
+
+The specs are **detailed and mostly aligned with each other** on API shape, state machine, and UI flows — but they **outran `requirements.md`**, which still describes a minimal v1 while downstream docs describe a multi-phase full product. **Resolve requirements vs target scope first**; everything else branches from that.
+
+Tell me which issues you want to resolve first and I can propose concrete doc updates (still without coding).
+
+---
+
+_**User**_
+
+Ok specs are done. Now lets start implementing the backend.
+
+First setup the Spring Boot project properly based on the versions in docs/project-versions.md.
+
+Create the normal package structure for:
+- controller
+- service
+- repository
+- entity
+- dto
+- exception
+- config
+
+Also setup the database connection and required dependencies.
+
+Dont implement the ticket APIs yet.
+
+Just get the basic spring boot project running and make sure it builds successfully.
+
+---
+
+_**Agent (composer-2.5)**_
+
+<think><details><summary>Thought Process</summary>
+Setting up the Spring Boot backend project using the versions specified in docs/project-versions.md. Creating the standard package structure for controllers, services, repositories, entities, DTOs, exceptions, and configuration. Configuring the database connection and required dependencies. The goal is to get the project building successfully before implementing the ticket APIs.
+</details></think>
+
+_**Agent (composer-2.5)**_
+
+Setting up the Spring Boot backend from the version matrix and architecture specs. Checking the project state and versions first.
+
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/docs/project-versions.md</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/spec/architecture.md</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2** • Read file: /home/kanupriya/applications/TicketMgmtSystem/rules/java-springboot.mdc</summary>
+
+</details></tool-use>
+
+_**Agent (composer-2.5)**_
+
+<tool-use data-tool-type="search" data-tool-name="glob_file_search"><details>
+<summary>Tool use: **glob_file_search** • Searched codebase "" • **0** results in **0** directories</summary>
+
+No results found
 </details></tool-use>

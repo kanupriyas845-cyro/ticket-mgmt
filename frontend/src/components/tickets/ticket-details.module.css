@@ -1,0 +1,184 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.backLink {
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+.backLink:hover {
+  color: var(--color-primary);
+}
+
+.title {
+  margin: 0;
+  font-size: 1.5rem;
+  word-break: break-word;
+}
+
+.muted {
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+.errorBanner {
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  color: #991b1b;
+}
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.metaGrid dt {
+  margin: 0 0 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-muted);
+}
+
+.metaGrid dd {
+  margin: 0;
+  font-weight: 500;
+}
+
+.descriptionBlock {
+  padding: 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.descriptionBlock p {
+  margin: 0.5rem 0 0;
+  white-space: pre-wrap;
+}
+
+.sectionHeading {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.statusActions {
+  padding: 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.actionButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.primaryButton {
+  padding: 0.5rem 1rem;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.primaryButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dangerButton {
+  padding: 0.5rem 1rem;
+  background: #fff;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.dangerButton:hover:not(:disabled) {
+  background: #fef2f2;
+}
+
+.dangerButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.secondaryButton {
+  padding: 0.4rem 0.75rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.secondaryButton:hover {
+  background: var(--color-bg);
+}
+
+.commentsSection {
+  padding: 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.commentList {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.commentItem {
+  padding: 0.75rem;
+  background: var(--color-bg);
+  border-radius: 6px;
+}
+
+.commentMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.875rem;
+}
+
+.commentBody {
+  margin: 0;
+  white-space: pre-wrap;
+}
