@@ -1,0 +1,107 @@
+---
+description: Java 21 and Spring Boot standards — layering, DTOs, validation, errors, logging
+globs: backend/**/*.java
+alwaysApply: false
+---
+
+# Java / Spring Boot
+
+Stack: **Java 21**, **Spring Boot 4.1.1**, Gradle wrapper. See `docs/project-versions.md`.
+
+## Package layout
+
+```
+com.ticketmgmt/
+  config/        # Security, JPA auditing, CORS
+  controller/    # REST endpoints only
+  service/       # Business logic
+  repository/    # Spring Data JPA interfaces
+  entity/        # JPA entities (never exposed via API)
+  dto/
+    request/     # Incoming payloads
+    response/    # Outgoing payloads
+  exception/     # Custom exceptions + @RestControllerAdvice
+  mapper/        # Entity ↔ DTO mapping (when logic is non-trivial)
+```
+
+## Layering rules
+
+- **Controller** — parse/validate input, delegate to service, return `ResponseEntity`. No business logic.
+- **Service** — business rules and orchestration. Put `@Transactional` here, not on controllers.
+- **Repository** — data access only; extend `JpaRepository<Entity, Id>`.
+- **Entity** — persistence model. **DTO** — API contract. Never return entities from controllers.
+
+## Naming
+
+| Item | Style | Example |
+|------|-------|---------|
+| Classes | PascalCase | `TicketService` |
+| Methods / fields | camelCase | `findById` |
+| Constants | `UPPER_SNAKE_CASE` | `MAX_PAGE_SIZE` |
+| REST paths | plural, kebab-case | `/api/v1/tickets` |
+| DB tables / columns | snake_case | `ticket_comments` |
+
+## DTOs
+
+- Prefer **Java records** for immutable request/response DTOs.
+- Name by purpose: `CreateTicketRequest`, `TicketResponse`.
+- Keep entities and DTOs separate — map in service or dedicated mapper class.
+
+## Validation
+
+- Annotate request DTO fields with Jakarta Validation (`@NotBlank`, `@NotNull`, `@Size`, `@Email`, `@Positive`).
+- Trigger with `@Valid @RequestBody` on controller methods.
+- Validation failures → **400** with field-level errors from the global handler.
+
+## Exception handling
+
+- One `@RestControllerAdvice` class (e.g. `GlobalExceptionHandler`).
+- Map domain exceptions to HTTP status:
+
+| Exception | Status |
+|-----------|--------|
+| Not found | 404 |
+| Validation / bad input | 400 |
+| Conflict (duplicate, invalid state) | 409 |
+| Unauthorised / forbidden | 401 / 403 |
+
+- Error JSON shape per `spec/02-conventions.md`. No stack traces in responses.
+
+## Logging
+
+```java
+private static final Logger log = LoggerFactory.getLogger(TicketService.class);
+```
+
+- **ERROR** — unexpected failures; **WARN** — recoverable issues; **INFO** — key business events; **DEBUG** — diagnostics.
+- Never log passwords, tokens, or secrets. Avoid logging full PII.
+
+## Dependency injection
+
+- Constructor injection only. Use Lombok `@RequiredArgsConstructor` on services/controllers if Lombok is on the classpath.
+
+## JPA entities
+
+- Explicit `@Table(name = "tickets")` and `@Column` when names differ from defaults.
+- Prefer `Long` or `UUID` for IDs — pick one strategy and use consistently.
+- Use `@CreatedDate` / `@LastModifiedDate` with JPA auditing enabled.
+- Default to `FetchType.LAZY`; avoid bidirectional mappings unless necessary.
+
+## API conventions
+
+- Base path: `/api/v1/`
+- Use `ResponseEntity` with correct status codes (201 for create, 204 for delete).
+- Paginate list endpoints with `Pageable` → return `Page<Dto>`.
+
+## Java 21 tips
+
+- Records, `Optional`, and `var` for obvious local types are fine.
+- Prefer readable code over clever streams.
+- Do not use preview/incubating language features.
+
+## Don't
+
+- Put business logic in controllers or repositories.
+- Catch `Exception` and swallow it.
+- Use field `@Autowired` injection.
+- Expose JPA entities in REST responses.

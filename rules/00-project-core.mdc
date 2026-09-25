@@ -1,0 +1,35 @@
+---
+description: Core project workflow, spec-driven development, and version constraints
+alwaysApply: true
+---
+
+# Project Core
+
+## Spec-Driven Development
+
+- Read `spec/` before implementing. Do not guess requirements.
+- If no feature spec exists, create one in `spec/features/` and get user approval first.
+- Update specs when requirements change, then update code.
+
+## Version Pins
+
+- Follow `docs/project-versions.md` for all toolchain and dependency versions.
+- Do not upgrade major versions without explicit user approval.
+
+## Scope Discipline
+
+- Make the smallest change that solves the request.
+- Do not scaffold or build the app unless the user explicitly asks.
+- Do not add dependencies without justification.
+
+## Security
+
+- No hardcoded secrets, credentials, or API keys.
+- No `eval`, unsafe deserialization, or auth bypasses.
+- Validate all user input at API boundaries.
+
+## Structure
+
+- Backend code → `backend/` (when created)
+- Frontend code → `frontend/` (when created)
+- Specs → `spec/`, docs → `docs/`

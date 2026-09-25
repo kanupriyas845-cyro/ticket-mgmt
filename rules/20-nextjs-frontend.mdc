@@ -1,0 +1,27 @@
+---
+description: Next.js and React conventions for the frontend
+globs: frontend/**/*
+alwaysApply: false
+---
+
+# Next.js / React Frontend
+
+## Stack
+
+- Next.js 15.5.x, React 19, TypeScript 5.7, Node 20 LTS (see `docs/project-versions.md`).
+
+## Conventions
+
+- App Router (`app/` directory); prefer Server Components by default.
+- Client Components only when interactivity requires it (`"use client"`).
+- Colocate feature code under `frontend/src/features/<feature>/`.
+- Shared UI in `frontend/src/components/`.
+
+## Data Fetching
+
+- Call backend REST API at `/api/v1/`; keep API client in `frontend/src/lib/api/`.
+- Handle loading, error, and empty states in UI.
+
+## Styling
+
+- Match existing patterns once introduced; do not add a new CSS framework without approval.

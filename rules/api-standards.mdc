@@ -1,0 +1,109 @@
+---
+description: REST API standards — URLs, HTTP methods, status codes, DTOs, validation and error responses
+globs: backend/**/controller/**,backend/**/dto/**
+alwaysApply: false
+---
+
+# REST API Standards
+
+Base path: **`/api/v1/`** — all endpoints are JSON unless noted otherwise.
+
+## URL naming
+
+- Plural **nouns**, **kebab-case**: `/api/v1/tickets`, `/api/v1/ticket-comments`
+- Resource ID in path: `/api/v1/tickets/{ticketId}`
+- Sub-resources nest under parent: `/api/v1/tickets/{ticketId}/comments`
+- Actions that aren't CRUD use a verb segment: `/api/v1/tickets/{ticketId}/status`
+- No trailing slashes. No verbs in place of nouns (`/getTickets` ❌).
+
+## HTTP methods
+
+| Method | Usage | Example |
+|--------|-------|---------|
+| `GET` | Read one or list | `GET /api/v1/tickets`, `GET /api/v1/tickets/{id}` |
+| `POST` | Create resource | `POST /api/v1/tickets` |
+| `PUT` | Full replace (rare) | `PUT /api/v1/tickets/{id}` |
+| `PATCH` | Partial update | `PATCH /api/v1/tickets/{id}`, `PATCH /api/v1/tickets/{id}/status` |
+| `DELETE` | Remove | `DELETE /api/v1/tickets/{id}` |
+
+Use **PATCH** (not PUT) for partial updates and status changes.
+
+## Pagination & sorting (list endpoints)
+
+```
+GET /api/v1/tickets?page=0&size=20&sort=createdAt,desc
+```
+
+Return a page wrapper:
+
+```json
+{
+  "content": [ ... ],
+  "page": 0,
+  "size": 20,
+  "totalElements": 142,
+  "totalPages": 8
+}
+```
+
+## Request / response DTOs
+
+- **Request:** `CreateTicketRequest`, `UpdateTicketRequest`, `ChangeTicketStatusRequest`
+- **Response:** `TicketResponse`, `TicketSummaryResponse`, `CommentResponse`
+- Use **records** in `dto.request` / `dto.response` packages.
+- Timestamps in **ISO-8601 UTC** (`2026-09-25T10:00:00Z`).
+- Enums as uppercase strings in JSON: `"OPEN"`, `"IN_PROGRESS"`.
+- Never expose JPA entities directly.
+
+## Status codes
+
+| Code | When |
+|------|------|
+| **200** | Successful GET, PUT, PATCH |
+| **201** | Resource created (POST); include `Location` header |
+| **204** | Successful DELETE (no body) |
+| **400** | Validation failure or malformed request |
+| **401** | Not authenticated |
+| **403** | Authenticated but not allowed (wrong role) |
+| **404** | Resource not found |
+| **409** | Conflict — duplicate, or **invalid ticket status transition** |
+| **500** | Unexpected server error (never intentional) |
+
+## Validation errors (400)
+
+Triggered by `@Valid` on request DTOs. Return:
+
+```json
+{
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Validation failed",
+  "timestamp": "2026-09-25T10:00:00Z",
+  "errors": [
+    { "field": "title", "message": "must not be blank" },
+    { "field": "priority", "message": "must not be null" }
+  ]
+}
+```
+
+## Common error response (non-validation)
+
+Used for 404, 409, 401, 403, and 500:
+
+```json
+{
+  "status": 404,
+  "error": "Not Found",
+  "message": "Ticket not found with id: 42",
+  "timestamp": "2026-09-25T10:00:00Z"
+}
+```
+
+- `message` is safe for clients — no stack traces, SQL, or internal details.
+- Map domain exceptions in `@RestControllerAdvice` (see `java-springboot.mdc`).
+
+## Ticket-specific notes
+
+- Status changes go through `PATCH /api/v1/tickets/{id}/status` with `ChangeTicketStatusRequest`.
+- Invalid transitions return **409**, not 400.
+- Comments: `POST /api/v1/tickets/{id}/comments`, `GET /api/v1/tickets/{id}/comments`.

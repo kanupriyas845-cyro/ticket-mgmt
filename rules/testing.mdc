@@ -1,0 +1,125 @@
+---
+description: Testing standards — unit, integration, API tests, validation, errors, ticket state transitions
+globs: backend/src/test/**/*
+alwaysApply: false
+---
+
+# Testing Guidelines
+
+Stack: **JUnit 5**, **Mockito**, **Spring Boot Test**, **AssertJ**. H2 for fast tests; Testcontainers + PostgreSQL only when Postgres-specific behaviour matters.
+
+## What to test where
+
+| Layer | Type | Tooling | Focus |
+|-------|------|---------|-------|
+| Service | Unit | `@ExtendWith(MockitoExtension.class)` | Business logic, state transitions, edge cases |
+| Repository | Integration | `@DataJpaTest` | Queries, mappings, constraints |
+| Controller | API | `@WebMvcTest` + `MockMvc` | HTTP status, JSON shape, validation errors |
+| Full flow | Integration | `@SpringBootTest` + `MockMvc` or `TestRestTemplate` | End-to-end API with real wiring |
+
+Name test classes `*Test` (unit/API slice) or `*IT` (full integration). Mirror package structure under `src/test/java`.
+
+## General rules
+
+- One logical behaviour per test method.
+- Use **Given / When / Then** structure in comments or method naming: `shouldReturn404_whenTicketNotFound`.
+- Prefer AssertJ (`assertThat`) over JUnit assertions.
+- Do not test Spring framework behaviour — test **your** code.
+- Every bug fix gets a regression test.
+
+## Unit tests (service layer)
+
+- Mock repositories and external dependencies.
+- Cover happy path, edge cases, and error paths.
+- Ticket state transition logic **must** live in the service layer and be unit-tested in isolation.
+
+```java
+@Test
+void shouldTransitionToInProgress_whenTicketIsOpen() { ... }
+
+@Test
+void shouldThrowConflict_whenTransitionFromClosedToOpen() { ... }
+```
+
+## Integration tests
+
+- `@DataJpaTest` for repository custom queries and DB constraints.
+- `@SpringBootTest` sparingly — only when multiple layers must work together.
+- Use `@Transactional` on test class to roll back data, or `@Sql` for seed data.
+- Profile `test` with H2 in-memory (see `application-test.yml`).
+
+## API tests
+
+- `@WebMvcTest(TicketController.class)` for controller-only tests.
+- Verify HTTP status, response JSON fields, and error body shape per `spec/02-conventions.md`.
+- Send requests with `MockMvc` — no need to start a real server for slice tests.
+
+```java
+mockMvc.perform(patch("/api/v1/tickets/{id}/status", id)
+        .contentType(APPLICATION_JSON)
+        .content("{\"status\":\"IN_PROGRESS\"}"))
+    .andExpect(status().isOk())
+    .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
+```
+
+## Validation and error cases
+
+Always test:
+
+| Case | Expected |
+|------|----------|
+| Missing required field | 400 + field error |
+| Invalid format (email, size) | 400 + field error |
+| Resource not found | 404 |
+| Invalid state transition | 409 |
+| Unauthenticated / wrong role | 401 / 403 |
+
+Assert the error JSON includes `status`, `error`, and `message` (and field errors for 400).
+
+## Ticket state transitions
+
+Authoritative rules: `spec/state-machine.md`.
+
+Test **every valid and every invalid transition** — full 25-pair matrix in `spec/test-strategy.md` §5.
+
+### Valid transitions (all five)
+
+| From | To |
+|------|-----|
+| OPEN | IN_PROGRESS |
+| OPEN | CANCELLED |
+| IN_PROGRESS | RESOLVED |
+| IN_PROGRESS | CANCELLED |
+| RESOLVED | CLOSED |
+
+### Invalid transitions (minimum test set)
+
+| From | To | Why |
+|------|----|-----|
+| CLOSED | *any* | Terminal state |
+| CANCELLED | *any* | Terminal state |
+| OPEN | RESOLVED | Skips IN_PROGRESS |
+| OPEN | CLOSED | Skips workflow |
+| IN_PROGRESS | CLOSED | Skips RESOLVED |
+| RESOLVED | CANCELLED | Cancel not allowed from RESOLVED |
+
+Each invalid case: service unit test throws domain exception → API test returns **409 Conflict**.
+
+Use parameterized tests when checking many transition pairs:
+
+```java
+@ParameterizedTest
+@CsvSource({
+    "CLOSED, OPEN",
+    "OPEN, RESOLVED",
+    "OPEN, CLOSED"
+})
+void shouldRejectInvalidTransition(TicketStatus from, TicketStatus to) { ... }
+```
+
+## What not to do
+
+- Do not hit a real production database.
+- Do not write tests that only assert `200 OK` with no body checks.
+- Do not duplicate the same scenario at unit and full-integration level — pick the right layer.
+- Do not leave tests disabled (`@Disabled`) without a ticket comment explaining why.
